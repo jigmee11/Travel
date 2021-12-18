@@ -1,65 +1,107 @@
 import React, {useState} from 'react';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Carousel from 'react-native-snap-carousel';
+import CarouselItem from './carouseltem';
 import HomeHeader from './homeHeader';
+import {useQuery, gql} from '@apollo/client';
+import ActivityItem from './activityItem';
+import HomeItem from './homeItem';
+import NavigationMenu from '../component/navigationMenu';
 
-const Home = () => {
-  const data = [
-    {
-      name: 'ALL',
-    },
-    {
-      name: 'MUSEUM',
-    },
-    {
-      name: 'HISTORICAL PLACES',
-    },
-    {
-      name: 'RESTAURANTS',
-    },
-  ];
+const CATEGORIES = gql`
+  query {
+    categoryCollection {
+      items {
+        name
+      }
+    }
+  }
+`;
+
+const ACTIVITY_SEARCH = gql`
+  query {
+    activityCollection {
+      items {
+        title
+        rate
+        category {
+          name
+        }
+        image {
+          url
+          width
+          height
+        }
+        sys {
+          id
+        }
+      }
+    }
+  }
+`;
+
+type CategoryType = {
+  name: string;
+};
+
+type CategoriesType = {
+  categoryCollection: {
+    items: CategoryType[];
+  };
+};
+
+const Home = ({navigation}) => {
+  const {error, data, loading} = useQuery<CategoriesType>(CATEGORIES);
+  const activities = useQuery(ACTIVITY_SEARCH);
   const [chosenMenu, setChosenMenu] = useState(0);
   return (
-    <SafeAreaView style={{paddingLeft: 20, paddingRight: 20}}>
-      <HomeHeader />
-      <View>
-        <FlatList
-          data={data}
-          keyExtractor={item => item.name}
-          horizontal={true}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item}) => (
-            <View
-              style={[
-                styles.menuItemContainer,
-                data[chosenMenu].name == item.name && styles.chosenMenuItem,
-              ]}>
-              <Text
-                style={[
-                  styles.menuItemText,
-                  data[chosenMenu].name == item.name && styles.chosenMenuText,
-                ]}>
-                {item.name}
-              </Text>
-            </View>
-          )}
-        />
-        <Carousel
-          layout={'tinder'}
-          layoutCardOffset={`18`}
-          data={data}
-          renderItem={({item}) => (
-            <View style={{width: 200}}>
-              <Text>lol</Text>
-            </View>
-          )}
-          sliderWidth={100}
-          itemWidth={100}
-        />
-      </View>
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={{paddingLeft: 20, paddingRight: 20}}>
+        <HomeHeader />
+        <View>
+          <FlatList
+            data={data?.categoryCollection.items}
+            keyExtractor={item => item.name}
+            horizontal={true}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({item, index}) => (
+              <Pressable onPress={() => setChosenMenu(index)}>
+                <View
+                  style={[
+                    styles.menuItemContainer,
+                    data?.categoryCollection.items[chosenMenu].name ==
+                      item.name && styles.chosenMenuItem,
+                  ]}>
+                  <Text
+                    style={[
+                      styles.menuItemText,
+                      data?.categoryCollection.items[chosenMenu].name ==
+                        item.name && styles.chosenMenuText,
+                    ]}>
+                    {item.name}
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+          />
+          <HomeItem
+            category={data?.categoryCollection.items[chosenMenu].name}
+          />
+        </View>
+      </SafeAreaView>
+      <NavigationMenu navigation={navigation} id={data?.categoryCollection?.items[chosenMenu].name}/>
+    </>
   );
 };
 
@@ -83,3 +125,25 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
+// import React from "react";
+// import { Text } from "react-native";
+// import {useQuery, gql} from '@apollo/client';
+
+// const CATEGORIES = gql`
+//   query {
+//     categoryCollection {
+//       items {
+//         name
+//       }
+//     }
+//   }
+// `;
+
+// const Home = () =>{
+//   const {error, data, loading} = useQuery(CATEGORIES);
+
+//   return(
+//     <Text>lol</Text>
+//   );
+// }
+// export default Home;
