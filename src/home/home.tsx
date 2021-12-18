@@ -70,6 +70,7 @@ const Home = ({navigation}) => {
         <HomeHeader />
         <View>
           <FlatList
+            nestedScrollEnabled={true}
             data={data?.categoryCollection.items}
             keyExtractor={item => item.name}
             horizontal={true}
@@ -95,12 +96,17 @@ const Home = ({navigation}) => {
               </Pressable>
             )}
           />
+          {/* <ScrollView> */}
           <HomeItem
             category={data?.categoryCollection.items[chosenMenu].name}
           />
+          {/* </ScrollView> */}
         </View>
       </SafeAreaView>
-      <NavigationMenu navigation={navigation} id={data?.categoryCollection?.items[chosenMenu].name}/>
+      <NavigationMenu
+        navigation={navigation}
+        id={data?.categoryCollection?.items[chosenMenu].name}
+      />
     </>
   );
 };
