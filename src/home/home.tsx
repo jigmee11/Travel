@@ -66,47 +66,47 @@ const Home = ({navigation}) => {
   const [chosenMenu, setChosenMenu] = useState(0);
   return (
     <>
-      <SafeAreaView style={{paddingLeft: 20, paddingRight: 20}}>
-        <HomeHeader />
-        <View>
-          <FlatList
-            nestedScrollEnabled={true}
-            data={data?.categoryCollection.items}
-            keyExtractor={item => item.name}
-            horizontal={true}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item, index}) => (
-              <Pressable onPress={() => setChosenMenu(index)}>
-                <View
-                  style={[
-                    styles.menuItemContainer,
-                    data?.categoryCollection.items[chosenMenu].name ==
-                      item.name && styles.chosenMenuItem,
-                  ]}>
-                  <Text
+      <SafeAreaView style={{flex:1,paddingLeft: 20, paddingRight: 20}}>
+        <ScrollView>
+          <HomeHeader />
+          <View>
+            <FlatList
+              nestedScrollEnabled={true}
+              data={data?.categoryCollection.items}
+              keyExtractor={item => item.name}
+              horizontal={true}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({item, index}) => (
+                <Pressable onPress={() => setChosenMenu(index)}>
+                  <View
                     style={[
-                      styles.menuItemText,
+                      styles.menuItemContainer,
                       data?.categoryCollection.items[chosenMenu].name ==
-                        item.name && styles.chosenMenuText,
+                        item.name && styles.chosenMenuItem,
                     ]}>
-                    {item.name}
-                  </Text>
-                </View>
-              </Pressable>
-            )}
-          />
-          {/* <ScrollView> */}
-          <HomeItem
-            category={data?.categoryCollection.items[chosenMenu].name}
-          />
-          {/* </ScrollView> */}
-        </View>
+                    <Text
+                      style={[
+                        styles.menuItemText,
+                        data?.categoryCollection.items[chosenMenu].name ==
+                          item.name && styles.chosenMenuText,
+                      ]}>
+                      {item.name}
+                    </Text>
+                  </View>
+                </Pressable>
+              )}
+            />
+            <HomeItem
+              category={data?.categoryCollection.items[chosenMenu].name}
+            />
+          </View>
+        </ScrollView>
+        <NavigationMenu
+          navigation={navigation}
+          id={data?.categoryCollection?.items[chosenMenu].name}
+        />
       </SafeAreaView>
-      <NavigationMenu
-        navigation={navigation}
-        id={data?.categoryCollection?.items[chosenMenu].name}
-      />
     </>
   );
 };

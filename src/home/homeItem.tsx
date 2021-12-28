@@ -79,12 +79,9 @@ const HomeItem = ({category = 'Restaurants'}) => {
       />
       <Text style={{marginTop: 30}}>Nearby activities</Text>
       <View>
-        <FlatList
-          nestedScrollEnabled={true}
-          renderItem={({item}) => <ActivityItem {...item} />}
-          keyExtractor={item => item.sys.id}
-          data={data?.activityCollection?.items}
-        />
+          {data?.activityCollection?.items.map(item => {
+            return <ActivityItem {...item} key={item.sys.id}/>;
+          })}
       </View>
     </View>
   );
